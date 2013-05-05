@@ -22,9 +22,11 @@ app = Flask("tpassist")
 
 @app.route("/update_md", methods=['POST'])
 def update_md():
-    print(request.form.keys()[0])
     data = json.loads(request.form.keys()[0])
-    html = md.markdown(data["markdown"], ['extra', 'codehilite', 'nl2br'])
+    html = md.markdown(data["markdown"], ['codehilite', 'extra', 'nl2br'])
+    print html
+    with open(data["title"] + ".md", 'w+') as f:
+        f.write(data["markdown"])
     return html
 
 @app.route("/upload_file", methods=['POST'])

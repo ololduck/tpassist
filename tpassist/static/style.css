@@ -1,11 +1,31 @@
 #left {
     height: 100%;
-    float left;
+    width: 45%;
+    float: left;
+    margin: 10px;
 }
+
+#left textarea {
+    width: 95%;
+    height: 600px;
+}
+
 #preview {
+    margin: 10px;
     height: 100%;
+    width: 48%;
     float: left;
 }
 #footer {
     clear: left;
+    font-size: 0.6em;
+    font-style: italic;
+}
+
+div.codehilite {
+    border-radius: 5px;
+    background-color: #eee;
+    border: solid #ccc 1px;
+    padding: 5px;
+    margin: 5px;
 }
