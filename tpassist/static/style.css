@@ -1,0 +1,11 @@
+#left {
+    height: 100%;
+    float left;
+}
+#preview {
+    height: 100%;
+    float: left;
+}
+#footer {
+    clear: left;
+}

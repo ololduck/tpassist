@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="left">
+<form method="post" action="/update_md">
+    Title: <input type="text" name="title" id="title" /><br />
+    <textarea name="markdown" id="editor"># I'm a title, bitch</textarea><br />
+    <input type="submit" value="save (temporary button)" />
+</form>
+</div>
+<div id="preview"></div>
+<script type="text/javascript">
+
+var counter = 0;
+$("#editor").bind('input propertychange', function() {
+    counter++;
+    if(counter > 15) {
+        json = {
+        "markdown": $("#editor").val(),
+        "title": $("#title").val()
+        };
+        $.post("/update_md",escape(JSON.stringify(json)), function(data) {
+                $("#preview").html(data);
+            }
+        );
+        counter = 0;
+    }
+});
+</script>
+
+{% endblock %}
