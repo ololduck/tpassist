@@ -1,0 +1,44 @@
+#left {
+    height: 100%;
+    width: 45%;
+    float: left;
+    margin: 10px;
+}
+
+#left textarea {
+    width: 95%;
+    height: 600px;
+}
+
+#preview {
+    margin: 10px;
+    height: 100%;
+    width: 48%;
+    float: left;
+}
+
+#preview img {
+    max-width: 100%;
+}
+
+#footer {
+    clear: left;
+    font-size: 0.6em;
+    font-style: italic;
+}
+
+blockquote {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    padding-left: 15px;
+    border-left: 3px solid #ccc;
+}
+
+div.codehilite {
+    border-radius: 5px;
+    background-color: #eee;
+    border: solid #ccc 1px;
+    padding: 5px;
+    margin: 5px;
+}

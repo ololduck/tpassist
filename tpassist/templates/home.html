@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Bienvenue</h1>
+<p>
+    <input type="text" id="filename" placeholder="Nom de fichier à éditer" /> <button id="edit">Editer</button>
+</p>
+
+<script type="text/javascript">
+    $("#edit").click(function(e) {
+        var filename = $("#filename").val();
+        if(filename == "")
+            alert("Veuillez entrer un nom.");
+        else
+            window.location = "/" + filename + "/edit";
+    });
+</script>
+{% endblock %}
