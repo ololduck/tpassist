@@ -10,17 +10,21 @@ import json
 
 from models import Document
 
-version = "0.0.9"
+version = "0.1.0"
+app = Flask("tpassist")
 
-with open("tpassist.conf.json", 'r') as f:
-    conf = json.loads(f.read())
+if(os.path.exists("tpassist.conf.json")):
+    with open("tpassist.conf.json", 'r') as f:
+        conf = json.loads(f.read())
+else:
+    conf = {}
 
 docs = {}
 
-app = Flask("tpassist")
-UPLOAD_FOLDER = 'static/media'
-MD_SAVE_FOLDER = 'documents'  # not used for now
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# NB: We should use the app.config dict for retaining config information
+
+DEFAULT_UPLOAD_FOLDER = 'static/media'
+app.config['UPLOAD_FOLDER'] = conf.get("UPLOAD_FOLDER", DEFAULT_UPLOAD_FOLDER)
 
 
 @app.route("/<name>/update_md", methods=['POST'])
@@ -31,7 +35,7 @@ def update_md(name):
     try:
         doc = docs[name]
     except KeyError:
-        app.logger.error("index \"%s\" does not exist in the global document index! that means the server has been restarted. Please go to / and try reopening the document." % name)
+        app.logger.error("index \"%s\" does not exist in the global document index! That means the server has been restarted, and the client view has not been refreshed. Please go to / and try reopening the document." % name)
         return "ERROR: please see logs", 500
     doc.markdown += data["markdown"]
     doc.save()
@@ -54,8 +58,8 @@ def upload_file(name):
     f = request.files['file_up']
     desired_path = request.form['file_to']
     if(f):
-        if(not os.path.exists(UPLOAD_FOLDER)):
-            os.mkdir(UPLOAD_FOLDER)
+        if(not os.path.exists(conf.get("UPLOAD_FOLDER", DEFAULT_UPLOAD_FOLDER))):
+            os.mkdir(conf.get("UPLOAD_FOLDER", DEFAULT_UPLOAD_FOLDER))
         desired_path = secure_filename(desired_path)
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], desired_path))
         return "", 200
@@ -67,6 +71,7 @@ def upload_file(name):
 def home():
     return render_template('home.html')
 
+
 @app.route('/<fname>/edit')
 def edit(fname):
     global docs
@@ -74,22 +79,23 @@ def edit(fname):
     docs[fname] = document
     return render_template('editor.html', doc=document)
 
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    if(request.method == 'GET'):
-        return render_template('login.html')
-    elif(request.method == 'POST'):
-        for user in conf["users"]:
-            if(request.form['user'] == user['username'] and request.form['passwd'] == user['passwd']):
-                user = user['username']
-                print("logged user %s" % user)
-                return redirect('/')
 
-@app.route('/logout')
-def logout():
-    if(user):
-        user = False
-    return redirect('/')
+# @app.route("/login", methods=['GET', 'POST'])
+# def login():
+#     if(request.method == 'GET'):
+#         return render_template('login.html')
+#     elif(request.method == 'POST'):
+#         for user in conf["users"]:
+#             if(request.form['user'] == user['username'] and request.form['passwd'] == user['passwd']):
+#                 user = user['username']
+#                 print("logged user %s" % user)
+#                 return redirect('/')
+
+# @app.route('/logout')
+# def logout():
+#     if(user):
+#         user = False
+#     return redirect('/')
 
 
 if __name__ == '__main__':
