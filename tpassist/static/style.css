@@ -16,10 +16,23 @@
     width: 48%;
     float: left;
 }
+
+#preview img {
+    max-width: 100%;
+}
+
 #footer {
     clear: left;
     font-size: 0.6em;
     font-style: italic;
+}
+
+blockquote {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    padding-left: 15px;
+    border-left: 3px solid #ccc;
 }
 
 div.codehilite {

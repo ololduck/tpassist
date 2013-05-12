@@ -1,30 +1,19 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div id="left">
-<form method="post" action="/update_md">
-    Title: <input type="text" name="title" id="title" /><br />
-    <textarea name="markdown" id="editor"># I'm a title, bitch</textarea><br />
-    <input type="submit" value="save (temporary button)" />
-</form>
-</div>
-<div id="preview"></div>
+
+<h1>Bienvenue</h1>
+<p>
+    <input type="text" id="filename" placeholder="Nom de fichier à éditer" /> <button id="edit">Editer</button>
+</p>
+
 <script type="text/javascript">
-
-var counter = 0;
-$("#editor").bind('input propertychange', function() {
-    counter++;
-    if(counter > 15) {
-        json = {
-        "markdown": $("#editor").val(),
-        "title": $("#title").val()
-        };
-        $.post("/update_md",escape(JSON.stringify(json)), function(data) {
-                $("#preview").html(data);
-            }
-        );
-        counter = 0;
-    }
-});
+    $("#edit").click(function(e) {
+        var filename = $("#filename").val();
+        if(filename == "")
+            alert("Veuillez entrer un nom.");
+        else
+            window.location = "/" + filename + "/edit";
+    });
 </script>
-
 {% endblock %}

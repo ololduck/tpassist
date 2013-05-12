@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="top">
+    <p>
+        <a href="/{{doc.name}}/dl/md"><button id="dl_markdown">DL markdown</button></a><a href="/{{doc.name}}/dl/pdf"><button id="dl_pdf">DL PDF</button></a>
+    </p>
+    <form id="file_form" method="post" enctype="multipart/form-data" action="/upload">
+        Upload file: <input type="file" id="file_up" name="file_up" /> to static/media/<input type="text" id="file_to" name="file_to" placeholder="filename.png" /> <input type="submit" id="file_send_button" /> <span id="up_status"></span>
+    </form>
+</div>
+<div id="left">
+    Title: <input type="text" name="title" id="title" placeholder="Please name your document" value="{{doc.name}}" /><br />
+    <textarea name="markdown" id="editor" placeholder="Type markdown here...">{%if doc %}{% if doc.markdown %}{{doc.markdown}}{%endif%}{%endif%}</textarea>
+</div>
+<div id="preview"></div>
+<script type="text/javascript">
+//http://alexking.org/blog/2003/06/02/inserting-at-the-cursor-using-javascript#comment-3817
+function insertAtCursor(myField, myValue) {
+    //IE support
+    if (document.selection) {
+        var temp;
+        myField.focus();
+        sel = document.selection.createRange();
+        temp = sel.text.length;
+        sel.text = myValue;
+        if (myValue.length == 0) {
+            sel.moveStart('character', myValue.length);
+            sel.moveEnd('character', myValue.length);
+        } else {
+            sel.moveStart('character', -myValue.length + temp);
+        }
+        sel.select();
+    }
+    //MOZILLA/NETSCAPE support
+    else if (myField.selectionStart || myField.selectionStart == '0') {
+        var startPos = myField.selectionStart;
+        var endPos = myField.selectionEnd;
+        myField.value = myField.value.substring(0, startPos) + myValue + myField.value.substring(endPos, myField.value.length);
+        myField.selectionStart = startPos + myValue.length;
+        myField.selectionEnd = startPos + myValue.length;
+    } else {
+        myField.value += myValue;
+    }
+}
+
+$("#editor").bind('input propertychange', function(e) {
+    var editor = $("#editor");
+    // var md = editor.value.substring(editor.selectionStart-1, editor.selectionEnd);
+    json = {
+        "markdown": editor.val(),
+        "title": $("#title").val()
+    };
+    $.post("/{{doc.name}}/update_md",escape(JSON.stringify(json)), function(data) {
+            $("#preview").html(data);
+        }
+    );
+});
+
+$("#editor").keydown(function(e) {
+    if(e.keyCode == 9) {
+        e.preventDefault();
+        insertAtCursor(this, "    ");
+    }
+});
+
+$("#file_send_button").click(function(e) {
+    e.preventDefault();
+    var formData = new FormData($('form')[0]);
+    formData.append("file_up", $("file_up"));
+    formData.append("file_to", $("file_to").val());
+    console.log(formData);
+    $.ajax({
+        type: 'POST',
+        url: '/{{doc.name}}/upload',
+        enctype: 'multipart/form-data',
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false
+    }).error(function(e){alert("error" + e)}).done(function() {
+        $("#up_status").text("✓");
+    });
+});
+</script>
+
+{% endblock %}
